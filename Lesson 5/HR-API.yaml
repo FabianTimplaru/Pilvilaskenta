@@ -1,0 +1,144 @@
+openapi: 3.0.0
+info:
+  version: "0.9.0"
+  title: "HR API"
+  description: "API that allows users to obtain info about employees"
+  termsOfService: https://smartbear.com/terms-of-service
+  contact:
+    name: Fabian Timplaru
+    url: https://www.lab.fi
+    email: fabian.timplaru@student.lab.fi
+
+  license:
+    name: Creative commons
+    url: https://license.lab.fi
+
+servers:
+  - url: https://dev.lab.fi
+    description: Dev server
+  - url: https://prod.lab.fi
+    description: Production server
+
+paths:
+  /employees:
+    get:
+      description: "Obtain info about employees from HR database"
+      parameters:
+        - name: bodyLimit
+          in: query
+          description: Amount of employees to return
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            example: 20
+
+        - name: pageNumber
+          in: query
+          description: Page info of requested employees (based on bodyLimit)
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            example: 0
+      responses:
+        "200":
+          description: Succesfull employees info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employees"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Employees"
+    post:
+      description: "Create a new employee into the HR database"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeDTO"
+      responses:
+        "201":
+          description: Created succesfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: John Doe
+                  email:
+                    type: string
+                    example: john.doe@example.com
+                  title:
+                    type: string
+                    example: "Manager"
+
+  /employees/{id}:
+    get:
+      description: Obtain info about one employee from HR database
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the requested employee
+          schema:
+            type: integer
+            example: 42
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        "400":
+          description: "Invalid ID (ID not integer)"
+        "404":
+          description: "ID not found"
+
+components:
+  schemas:
+    Employees:
+      description: Array of employees"
+      type: array
+      items:
+        $ref: "#/components/schemas/Employee"
+
+    Employee:
+      description: One employee info
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        title:
+          type: string
+          example: "Manager"
+
+    EmployeeDTO:
+      description: One employee insert info
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        title:
+          type: string
+          example: "Manager"
