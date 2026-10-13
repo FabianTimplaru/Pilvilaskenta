@@ -51,7 +51,8 @@ paths:
                 $ref: "#/components/schemas/Employees"
             application/xml:
               schema:
-                $ref: "#/components/schemas/Employees"
+                items:
+                  $ref: "#/components/schemas/Employees"
     post:
       description: "Create a new employee into the HR database"
       requestBody:
