@@ -1,0 +1,9 @@
+node_modules/
+nestjs-demo/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+*.tsbuildinfo
