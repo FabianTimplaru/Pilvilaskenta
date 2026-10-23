@@ -1,0 +1,506 @@
+openapi: 3.2.0
+info:
+  version: 1.0.0
+  title: To Do API
+  description: API that helps users arrange their tasks in categories in order of due date
+  contact:
+    name: Fabian Timplaru
+    url: https://api.thingsTODO.fi
+    email: fabian.timplaru@student.lab.fi
+
+  license:
+    name: MIT license
+    url: https://opensource.org/license/MIT
+
+servers:
+  - url: https://api.dev.thingsTODO.fi
+    description: Development server
+  - url: https://api.prod.thingsTODO.fi
+    description: Production server
+
+paths:
+  /categories:
+    get:
+      description: Obtain a list of current categories
+      summary: Retrieve all categories
+      responses:
+        "200":
+          description: Successfully retrieved active categories
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Categories"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Categories"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      description: Create a new category
+      summary: Create new category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCategoryDto"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/CreateCategoryDto"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /categories/{categoryId}:
+    delete:
+      description: Removing one of the current categories and all its elements
+      summary: Delete category
+      parameters:
+        - name: categoryId
+          in: path
+          description: The category to be deleted
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /categories/{categoryId}/tasks:
+    get:
+      description: Retrieves active tasks belonging to a specified category, sorted by due date
+      summary: Retrieve tasks
+      parameters:
+        - name: categoryId
+          in: path
+          description: Id of the category whose tasks are being retrieved
+          required: true
+          schema:
+            type: integer
+        - name: filter
+          in: query
+          description: Which of the tasks to be retrieved
+          required: false
+          schema:
+            type: string
+            enum:
+              - active
+            default: active
+        - name: sort
+          in: query
+          description: The way in which the tasks are sorted
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
+      responses:
+        "200":
+          description: Successfully retrieved active tasks
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tasks"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Tasks"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      description: Create a new task inside the specified category
+      summary: Create task
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskDto"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/CreateTaskDto"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /categories/{categoryId}/tasks/{taskId}:
+    get:
+      description: Retrieves the information of a task from a chosen category
+      summary: Retrieve task information
+      parameters:
+        - name: categoryId
+          in: path
+          description: Id of the category from which we retrieve tasks
+          required: true
+          schema:
+            type: integer
+        - name: taskId
+          in: path
+          description: Id of the task whose information we retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully retrieved task information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      description: Users can change the status of a task to done or cancelled
+      summary: Update task status
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskStatusDto"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskStatusDto"
+      responses:
+        "204":
+          description: Successfully changed the task status
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Categories:
+      description: Array of categories
+      type: array
+      items:
+        $ref: "#/components/schemas/Category"
+
+    Tasks:
+      description: Array of current tasks
+      type: array
+      items:
+        $ref: "#/components/schemas/TaskSummary"
+
+    Category:
+      description: A category to arrange items for ease of access
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Schoolworks
+
+    Task:
+      description: All the info from one tasks
+      type: object
+      required:
+        - id
+        - name
+        - created
+        - modified
+        - due
+        - status
+        - categoryId
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Pilvilaskenta homework
+        description:
+          type: string
+          example: I need to finish the assigned homework or the teacher will sacrifice me to openAI
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        due:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - armed
+            - fired
+            - cancelled
+            - done
+        categoryId:
+          type: integer
+
+    TaskSummary:
+      description: Summarised info from one task
+      type: object
+      required:
+        - id
+        - name
+        - due
+        - status
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Pilvilaskenta homework
+        due:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - armed
+            - fired
+
+    CreateTaskDto:
+      description: All the info required to create a task
+      type: object
+      required:
+        - name
+        - due
+      properties:
+        name:
+          type: string
+          example: Pilvilaskenta homework
+        description:
+          type: string
+          example: I need to finish the assigned homework or the teacher will sacrifice me to openAI
+        due:
+          type: string
+          format: date-time
+
+    CreateCategoryDto:
+      description: Information required to create a new category
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Schoolworks
+
+    UpdateTaskStatusDto:
+      description: Schema that helps with updating the status of tasks
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - cancelled
+            - done
+
+    Error:
+      description: Reusable error schema
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 404
+        message:
+          type: string
+        field:
+          type: string
+          example: id

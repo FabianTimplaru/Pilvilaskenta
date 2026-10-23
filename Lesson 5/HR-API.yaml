@@ -108,7 +108,7 @@ paths:
 components:
   schemas:
     Employees:
-      description: Array of employees"
+      description: Array of employees
       type: array
       items:
         $ref: "#/components/schemas/Employee"
