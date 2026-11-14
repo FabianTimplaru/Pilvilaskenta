@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePetDto } from './dto/create-pet.dto';
-import { Pet } from './entities/pet entitiy';
+import { Pet } from './entities/pet entity';
 import { v4 as uuidv4 } from 'uuid';
+import { UpdatePetDto } from './dto/update-pet.dto';
 
 @Injectable()
 export class PetsService {
@@ -30,6 +31,27 @@ export class PetsService {
             throw new NotFoundException(`Pet with ID ${id} not found`);
         }
 
+        return pet;
+    }
+
+    removePet(id: string): void {
+        const index = this.pets.findIndex(pet => pet.pet_id === id);
+
+        if (index < 0) {
+            throw new NotFoundException(`Pet with ID ${id} not found`);
+        }
+
+        this.pets.splice(index, 1);
+    }
+
+    updatePet(id: string, updatePetDto: UpdatePetDto): Pet {
+        const pet = this.pets.find(pet => pet.pet_id === id);
+
+        if (!pet) {
+            throw new NotFoundException(`Pet with ID ${id} not found`);
+        }
+
+        Object.assign(pet, updatePetDto);
         return pet;
     }
 }

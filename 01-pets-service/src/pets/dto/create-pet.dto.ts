@@ -7,7 +7,7 @@ export class CreatePetDto {
     name: string;
 
     @IsString()
-    @Length(10, 20)
+    @Length(10, 200)
     @ApiProperty({ example: 'Friendly yellow dog', description: 'Characteristics of pet.' })
     description: string;
 
