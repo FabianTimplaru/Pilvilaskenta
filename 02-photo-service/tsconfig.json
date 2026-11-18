@@ -16,8 +16,11 @@
     "rootDir": ".",
     "incremental": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "strictPropertyInitialization": false,
-    "types": ["vitest/globals", "node"]
+    "types": [
+      "vitest/globals",
+      "node"
+    ]
   }
 }

@@ -8,6 +8,7 @@ import { ProfilesModule } from '../profiles/profiles.module.js';
 @Module({
   imports: [TypeOrmModule.forFeature([User]), ProfilesModule],
   controllers: [UsersController],
-  providers: [UsersService]
+  providers: [UsersService],
+  exports: [UsersService]
 })
 export class UsersModule { }

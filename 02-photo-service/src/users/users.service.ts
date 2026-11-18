@@ -15,6 +15,7 @@ export class UsersService {
             throw new Error('Email already taken');
         }
 
+        // TODO: surround with try - catch and remove profile if needed
         const profile = await this.profilesService.insertProfile(createUserWithProfile.gender, createUserWithProfile.photo);
         const user = new User();
         user.name = createUserWithProfile.name;
@@ -31,4 +32,7 @@ export class UsersService {
         return this.usersRepository.find({ relations: { profile: true } });
     }
 
+    async findUserByUsername(username: string): Promise<User | null> {
+        return await this.usersRepository.findOne({ where: { email: username } });
+    }
 }
